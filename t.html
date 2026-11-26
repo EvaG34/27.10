@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>События</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .task-list {
+            width: 500px;
+            max-width: 100%;
+        }
+
+        #start-message {
+            margin: 10px;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            border: 1px solid gray;
+            padding: 6px 8px;
+            margin: 2px 10px;
+            gap: 8px;
+        }
+
+        .task p {
+            margin-left: 4px;
+            overflow-wrap: anywhere;
+            flex: 1;
+        }
+
+        .completed {
+            background-color: green;
+            color: white;
+        }
+
+        .completed p {
+            text-decoration: line-through;
+        }
+
+        .input-panel {
+            width: 500px;
+            max-width: 100%;
+            margin: 8px;
+            padding: 2px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .input-panel button {
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        .input-panel input {
+            height: 30px;
+            padding-left: 4px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .deleteButton {
+            background-color: rgb(255, 0, 0);
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="input-panel">
+        <input
+            type="text"
+            id="task-name-input"
+            placeholder="Введите задачу"
+        >
+        <button id="add-task-btn">Додати задачу</button>
+    </div>
+
+    <div class="task-list">
+        <p id="start-message">Нет нових задач</p>
+    </div>
+    <script>
+        let taskNameInput = document.querySelector("#task-name-input");
+        let addTaskButton = document.querySelector("#add-task-btn");
+        let startMessage = document.querySelector("#start-message");
+        let taskList = document.querySelector(".task-list");
+        addTaskButton.addEventListener("click", addTaskHandler)
+        taskNameInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                addTaskHandler();
+            }
+        })
+      
+        function createTask(text) {
+            let div = document.createElement("div");
+            div.classList.add("task");
+
+            let input = document.createElement("input");
+            input.type = "checkbox";
+
+            let p = document.createElement("p");
+            p.innerText = text;
+
+            let deleteButton = document.createElement("button");
+            deleteButton.innerText = "Delete";
+            deleteButton.classList.add("deleteButton");
+
+            deleteButton.hidden = true;
+
+            input.addEventListener("change", function () {
+                if (this.checked) {
+            
+                    div.classList.add("completed");
+                    deleteButton.hidden = false;
+                } else {
+                    div.classList.remove("completed");
+                    deleteButton.hidden = true;
+                }
+            });
+            deleteButton.addEventListener("click", function () {
+                div.remove();
+                if (taskList.querySelectorAll(".task").length === 0) {
+                    startMessage.hidden = false;
+                }
+            });
+
+            div.append(input);
+            div.append(p);
+            div.append(deleteButton);
+
+            return div;
+        }
+        function addTaskHandler() {
+            let text = taskNameInput.value.trim();
+
+            if (text !== "") {
+                startMessage.hidden = true;
+
+                let newTask = createTask(text);
+                taskList.append(newTask);
+
+                taskNameInput.value = "";
+                taskNameInput.focus();
+            } else {
+                alert("Введите имя задачи");
+            }
+        }
+    </script>
+</body>
